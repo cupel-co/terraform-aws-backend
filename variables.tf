@@ -1,42 +1,37 @@
-variable "company" {
-  type = string
-  description = "Company name"
+variable "iam_path" {
+  description = "Path name to store IAM policies and groups."
+  type        = string
+  default     = "terraform"
 }
+variable "iam_policy_prefix" {
+  description = "The name of the policy. The name must consist of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: =,.@-_.. User names are not distinguished by case. For example, you cannot create users named both 'TESTUSER' and 'testuser'."
+  type        = string
+  default     = "terraform"
+}
+
 variable "environment" {
-  type = string
-  description = "Environment name"
+  description = "Environment name. This value is used as a tag."
+  type        = string
 }
 variable "name" {
-  type = string
-  description = "Name"
+  description = "Name of infrastructure. This value is used in tags."
+  type        = string
 }
-variable "service" {
-  type = string
-  description = "Service name"
+variable "tags" {
+  description = "Tags to add to resources. Merged with the default tags `Environment`, `Name` & `ManagedBy`."
+  type        = map(string)
+  default     = {}
 }
-variable "group_name" {
-  type = string
-  description = "The group for all the terraform policies"
-}
-variable "iam_path" {
-  type = string
-  description = "The path to store policies and groups"
-}
-variable "bucket_name" {
-  type = string
-  description = "Name of the bucket"
-}
-variable "bucket_tags" {
-  description = "Tags for the s3 bucket"
-  type = "map"
-  default = {}
-}
-variable "dynamodb_name" {
-  type = string
-  description = "Name of the dynamodb table"
-}
-variable "dynamodb_tags" {
-  description = "Tags for the dynamodb table"
-  type = "map"
-  default = {}
+
+locals {
+  tags =  merge(
+    {
+      Environment = var.environment
+      Name = var.name
+      ManagedBy = "Terraform"
+    },
+    var.tags
+  )
+  
+  iam_path = "/${var.iam_path}/"
 }
