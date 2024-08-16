@@ -1,4 +1,4 @@
-resource "aws_kms_key" "encryption_key" {
+resource "aws_kms_key" "primary" {
   provider = aws.primary
   
   description = "This key is used to encrypt state files"
@@ -16,11 +16,7 @@ resource "aws_kms_key" "encryption_key" {
 resource "aws_kms_replica_key" "secondary" {
   provider = aws.secondary
   
-  description = "Replica of ${aws_kms_key.encryption_key.id}"
+  description = "Replica of ${aws_kms_key.primary.id}"
   deletion_window_in_days = 7
-  primary_key_arn = aws_kms_key.encryption_key.arn
-}
-
-output "encryption_key_id" {
-  value = aws_kms_key.encryption_key.id
+  primary_key_arn = aws_kms_key.primary.arn
 }

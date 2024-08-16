@@ -131,11 +131,6 @@ resource "aws_iam_role_policy_attachment" "primary_bucket_replication" {
   policy_arn = aws_iam_policy.primary_bucket_replication.arn
 }
 
-output "primary_aws_s3_bucket_name" {
-  value = aws_s3_bucket.primary.id
-}
-
-
 resource "aws_s3_bucket" "secondary" {
   provider = aws.secondary
 
@@ -267,8 +262,4 @@ resource "aws_iam_role_policy_attachment" "secondary_bucket_replication" {
 
   role       = aws_iam_role.secondary_bucket_replication.name
   policy_arn = aws_iam_policy.secondary_bucket_replication.arn
-}
-
-output "secondary_aws_s3_bucket_name" {
-  value = aws_s3_bucket.secondary.id
 }

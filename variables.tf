@@ -36,16 +36,8 @@ variable "iam_policy_prefix" {
   default     = "terraform"
 }
 
-variable "environment" {
-  description = "Environment name. This value is used as a tag."
-  type        = string
-}
-variable "name" {
-  description = "Name of infrastructure. This value is used in tags."
-  type        = string
-}
 variable "tags" {
-  description = "Tags to add to resources. Merged with the default tags `Environment`, `Name` & `ManagedBy`."
+  description = "Tags to add to resources."
   type        = map(string)
   default     = {}
 }
