@@ -1,55 +1,82 @@
-variable "dynamodb_name" {
-  description = "The name of the table, this needs to be unique within a region."
-  type        = string
-}
+resource "aws_dynamodb_table" "primary" {
+  provider = aws.primary
 
-resource "aws_dynamodb_table" "lock_table" {
   name = var.dynamodb_name
   billing_mode = "PAY_PER_REQUEST"
+  stream_enabled   = true
+  stream_view_type = "NEW_AND_OLD_IMAGES"
+  
+  server_side_encryption = {
+    enabled = true
+  }
+
+  point_in_time_recovery = {
+    enabled = true
+  }
+  
   hash_key = "LockID"
   attribute {
     name = "LockID"
     type = "S"
   }
 
-  point_in_time_recovery {
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  tags = var.tags
+}
+
+resource "aws_dynamodb_table" "secondary" {
+  provider = aws.secondary
+
+  name = var.dynamodb_name
+  billing_mode = "PAY_PER_REQUEST"
+  stream_enabled   = true
+  stream_view_type = "NEW_AND_OLD_IMAGES"
+
+  server_side_encryption = {
     enabled = true
   }
 
-  server_side_encryption {
+  point_in_time_recovery = {
     enabled = true
-    kms_key_arn = aws_kms_alias.remote_state_key.target_key_arn
+  }
+
+  hash_key = "LockID"
+  attribute {
+    name = "LockID"
+    type = "S"
   }
 
   lifecycle {
     prevent_destroy = true
   }
-  tags = local.tags
+
+  tags = var.tags
 }
 
-resource "aws_iam_policy" "remote_lock" {
-  description = "Policy for terraform state lock table"
-  name = "${var.iam_policy_prefix}-dynamodb"
-  path = local.iam_path
-  policy = data.aws_iam_policy_document.remote_lock.json
-  
-  tags = local.tags
+data "aws_region" "primary" {
+  provider = aws.primary
 }
-data "aws_iam_policy_document" "remote_lock" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "dynamodb:GetItem",
-      "dynamodb:PutItem",
-      "dynamodb:DeleteItem",
-      "dynamodb:DescribeTable"
-    ]
-    resources = [
-      aws_dynamodb_table.lock_table.arn
-    ]
+data "aws_region" "secondary" {
+  provider = aws.secondary
+}
+resource "aws_dynamodb_global_table" "table" {
+  provider = aws.primary
+
+  name = var.dynamodb_name
+
+  replica {
+    region_name = data.aws_region.primary.name
   }
-}
 
-output "dynamodb_iam_policy_arn" {
-  value = aws_iam_policy.remote_lock.arn
+  replica {
+    region_name = data.aws_region.secondary.name
+  }
+  
+  depends_on = [
+    aws_dynamodb_table.primary,
+    aws_dynamodb_table.secondary,
+  ]
 }

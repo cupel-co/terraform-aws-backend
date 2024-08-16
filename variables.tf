@@ -16,6 +16,15 @@ variable "secondary_bucket_name" {
   }
 }
 
+variable "dynamodb_name" {
+  description = "The name of the table, this needs to be unique within a region."
+  type        = string
+  validation {
+    condition = length(var.dynamodb_name) >= 3 && length(var.dynamodb_name) <= 255
+    error_message = "The name should be between 3 and 255 characters long(inclusive)."
+  }
+}
+
 variable "iam_path" {
   description = "Path name to store IAM policies and groups."
   type        = string
@@ -42,14 +51,5 @@ variable "tags" {
 }
 
 locals {
-  tags =  merge(
-    {
-      Environment = var.environment
-      Name = var.name
-      ManagedBy = "Terraform"
-    },
-    var.tags
-  )
-  
   iam_path = "/${var.iam_path}/"
 }
