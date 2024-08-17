@@ -56,12 +56,6 @@ resource "aws_dynamodb_table" "secondary" {
   tags = var.tags
 }
 
-data "aws_region" "primary" {
-  provider = aws.primary
-}
-data "aws_region" "secondary" {
-  provider = aws.secondary
-}
 resource "aws_dynamodb_global_table" "table" {
   provider = aws.primary
 
