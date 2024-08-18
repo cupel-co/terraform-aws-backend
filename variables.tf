@@ -25,23 +25,18 @@ variable "dynamodb_name" {
   }
 }
 
-variable "iam_path" {
-  description = "Path name to store IAM policies and groups."
+variable "iam_prefix" {
+  description = "The prefix for IAM resources. The name must consist of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: =,.@-_.. User names are not distinguished by case. For example, you cannot create users named both 'TESTUSER' and 'testuser'."
   type        = string
-  default     = "terraform"
+  default     = "Terraform"
 }
-variable "iam_policy_prefix" {
-  description = "The name of the policy. The name must consist of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: =,.@-_.. User names are not distinguished by case. For example, you cannot create users named both 'TESTUSER' and 'testuser'."
-  type        = string
-  default     = "terraform"
+variable "encryption_key_access_allowed_arns" {
+  description = "The arns that are allowed to use the encryption key"
+  type        = list(string)
 }
 
 variable "tags" {
   description = "Tags to add to resources."
   type        = map(string)
   default     = {}
-}
-
-locals {
-  iam_path = "/${var.iam_path}/"
 }

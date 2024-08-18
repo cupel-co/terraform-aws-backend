@@ -32,7 +32,6 @@ resource "aws_s3_bucket_versioning" "primary" {
     status = "Enabled"
   }
 }
-
 resource "aws_s3_bucket_replication_configuration" "primary" {
   provider = aws.primary
   
@@ -165,7 +164,6 @@ resource "aws_s3_bucket_versioning" "secondary" {
     status = "Enabled"
   }
 }
-
 resource "aws_s3_bucket_replication_configuration" "secondary" {
   provider = aws.secondary
 
@@ -262,4 +260,43 @@ resource "aws_iam_role_policy_attachment" "secondary_bucket_replication" {
 
   role       = aws_iam_role.secondary_bucket_replication.name
   policy_arn = aws_iam_policy.secondary_bucket_replication.arn
+}
+
+resource "aws_iam_policy" "buckets_access" {
+  provider = aws.primary
+
+  description = "Terraform state buckets access"
+  name = "${var.iam_prefix}StateBucketsAccess"
+  policy = data.aws_iam_policy_document.buckets_access.json
+
+  tags = var.tags
+}
+data "aws_iam_policy_document" "buckets_access" {
+  provider = aws.primary
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket",
+      "s3:GetBucketVersioning"
+    ]
+    resources = [
+      aws_s3_bucket.primary.arn,
+      aws_s3_bucket.secondary.arn,
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:ListObject",
+      "s3:PutObject"
+    ]
+    #tfsec:ignore:aws-iam-no-policy-wildcards
+    resources = [
+      "${aws_s3_bucket.primary.arn}/*",
+      "${aws_s3_bucket.secondary.arn}/*"
+    ]
+  }
 }

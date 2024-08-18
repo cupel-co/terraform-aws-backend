@@ -56,7 +56,7 @@ resource "aws_dynamodb_table" "secondary" {
   tags = var.tags
 }
 
-resource "aws_dynamodb_global_table" "table" {
+resource "aws_dynamodb_global_table" "global" {
   provider = aws.primary
 
   name = var.dynamodb_name
@@ -73,4 +73,26 @@ resource "aws_dynamodb_global_table" "table" {
     aws_dynamodb_table.primary,
     aws_dynamodb_table.secondary,
   ]
+}
+
+resource "aws_iam_policy" "global_table" {
+  description = "Terraform lock table access policy"
+  name = "${var.iam_prefix}LockTableAccess"
+  policy = data.aws_iam_policy_document.global_table.json
+
+  tags = var.tags
+}
+data "aws_iam_policy_document" "global_table" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:DescribeTable"
+    ]
+    resources = [
+      aws_dynamodb_global_table.global.arn
+    ]
+  }
 }
