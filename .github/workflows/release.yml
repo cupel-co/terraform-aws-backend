@@ -44,6 +44,8 @@ jobs:
     env:
       tag: v${{ needs.generate-version.outputs.sem-ver }}
     environment: Production
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
