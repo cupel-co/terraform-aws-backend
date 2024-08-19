@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   generate-version:
-    name: Release
+    name: Generate Version
     runs-on: ubuntu-latest
     outputs:
       sem-ver: ${{ steps.get-version.outputs.semVer }}
