@@ -1,4 +1,8 @@
 # Terraform Module AWS Backend
+
+![Pipeline](https://github.com/cupel-co/terraform-module-aws-backend/actions/workflows/release.yml/badge.svg?event=pull_request&branch=main)
+
+
 Provision AWS resources for Terraform backend
 
 ## Variables
