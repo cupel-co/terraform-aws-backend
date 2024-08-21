@@ -2,19 +2,23 @@
 
 ![Pipeline](https://github.com/cupel-co/terraform-module-aws-backend/actions/workflows/release.yml/badge.svg?branch=main)
 
-Provision AWS resources for Terraform backend
+Provision AWS resources for Terraform backend. Resources provisioned: 
+* DynamoDB global table
+* IAM policy to access DynamoDB table  
+* Primary bucket with replication to secondary
+* Secondary bucket with replication to primary
+* IAM policy to access primary and secondary buckets
+* KMS Key for encryption of state on the client side with policy that is limited to the arns specified in `encryption_key_access_allowed_arns`
 
 ## Variables
-| Variables         | Description                                                                                                                                                                                                                                                                               | Default         | Example                  |
-|:------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|:-------------------------|
-| environment       | Environment name. This value is used as a tag key-value.                                                                                                                                                                                                                                  |                 | `production`             |
-| name              | Name of infrastructure. This value is used as a tag key-value.                                                                                                                                                                                                                            |                 | `gavanlamb`              |
-| tags              | Tags to add to all resources. Merged with the default tags `Environment`, `Name` & `ManagedBy`                                                                                                                                                                                            |                 |                          |
-| iam_path          | Path name to store IAM policies under                                                                                                                                                                                                                                                     | `terraform`     | `terraform`              |
-| iam_policy_prefix | IAM policy name prefix                                                                                                                                                                                                                                                                    |                 |                          |
-| bucket_name       | Name of the bucket. If omitted, Terraform will assign a random, unique name. Must be less than or equal to 63 characters in length.                                                                                                                                                       |                 |                          |
-| dynamodb_name     | Name of the table, this needs to be unique within the specified region.                                                                                                                                                                                                                   |                 |                          |
-| key_name          | Name of the key, this needs to be unique.                                                                                                                                                                                                                                                 | `terraform-key` |                          |
+| Variables                          | Description                                                                                                                                                                                                                                                                                            | Default | Example |
+|:-----------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------|:--------|
+| dynamodb_name                      | The name of the table, this needs to be unique within a region.                                                                                                                                                                                                                                        |         |         |
+| encryption_key_access_allowed_arns | The arns that are allowed to use the encryption key                                                                                                                                                                                                                                                    |         |         |
+| iam_prefix                         | The prefix for IAM resources. The name must consist of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: =,.@-_.. User names are not distinguished by case. For example, you cannot create users named both 'TESTUSER' and 'testuser'. |         |         |
+| primary_bucket_name                | The name of the primary bucket. If omitted, Terraform will assign a random, unique name. Must be greater tha 9 and less than 64 characters in length.                                                                                                                                                  |         |         |
+| secondary_bucket_name              | The name of the secondary bucket. If omitted, Terraform will assign a random, unique name. Must be greater tha 9 and less than 64 characters in length.                                                                                                                                                |         |         |
+| tags                               | Tags to add to resources.                                                                                                                                                                                                                                                                              |         |         |
 
 ## How to
 Specify the module source and the provider information.
@@ -22,18 +26,45 @@ Specify the module source and the provider information.
 ### Sample
 ```hcl
 provider "aws" {
+    alias = "primary"
     region = "ap-southeast-2"
+    default_tags {
+        tags = {
+            Environment = "CICD"
+            Owner       = "Platform"
+            Project     = "Terraform State"
+        }
+    }
+}
+
+provider "aws" {
+    alias = "secondary"
+    region = "ap-southeast-4"
+    default_tags {
+        tags = {
+            Environment = "CICD"
+            Owner       = "Platform"
+            Project     = "Terraform State"
+        }
+    }
 }
 
 module "backend" {
-    source = "github.com/expensely/terraform-module-aws-backend"
-    environment = "production"
-    name = "gavanlamb"
-    iam_path = "terraform"
-    iam_policy_prefix = "terraform"
-    bucket_name = "terraform"
-    dynamodb_name = "terraform_lock"
-    key_name = "terraform"
-    tags = {}
+    source = "github.com/cupel-co/terraform-module-aws-backend?ref=v0.0.1"
+    
+    dynamodb_name = "TerraformLock"
+    encryption_key_access_allowed_arns = [
+        ""
+    ]
+    iam_prefix = "Terraform"
+    primary_bucket_name = "cupel-terraform-state-primary"
+    secondary_bucket_name = "cupel-terraform-state-secondary"
+    tags = {
+        CostCode = "123456"
+    }
+    providers = {
+        aws.primary = aws.primary
+        aws.secondary = aws.secondary
+    }
 }
 ```
