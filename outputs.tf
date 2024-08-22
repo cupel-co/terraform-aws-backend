@@ -16,8 +16,8 @@ output "encryption_key_access_policy_arn" {
 }
 
 output "lock_table_name" {
-  value = aws_dynamodb_table.primary.name
+  value = aws_dynamodb_table.lock_table.name
 }
 output "lock_table_access_policy_arn" {
-  value = aws_iam_policy.global_table.arn
+  value = aws_iam_policy.lock_table.arn
 }
