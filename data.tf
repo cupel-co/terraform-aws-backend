@@ -6,7 +6,7 @@ data "aws_region" "secondary" {
 }
 
 data "aws_caller_identity" "primary" {
-  provider = aws.secondary
+  provider = aws.primary
 }
 data "aws_caller_identity" "secondary" {
   provider = aws.secondary

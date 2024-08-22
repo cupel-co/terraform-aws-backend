@@ -94,6 +94,8 @@ resource "aws_kms_key_policy" "secondary" {
 }
 
 resource "aws_iam_policy" "key_access" {
+  provider = aws.primary
+  
   description = "Terraform kms access policy"
   name = "${var.iam_prefix}KeyAccess"
   policy = data.aws_iam_policy_document.key_access.json

@@ -76,6 +76,8 @@ resource "aws_dynamodb_global_table" "global" {
 }
 
 resource "aws_iam_policy" "global_table" {
+  provider = aws.primary
+  
   description = "Terraform lock table access policy"
   name = "${var.iam_prefix}LockTableAccess"
   policy = data.aws_iam_policy_document.global_table.json
@@ -83,6 +85,8 @@ resource "aws_iam_policy" "global_table" {
   tags = var.tags
 }
 data "aws_iam_policy_document" "global_table" {
+  provider = aws.primary
+  
   statement {
     effect = "Allow"
     actions = [
