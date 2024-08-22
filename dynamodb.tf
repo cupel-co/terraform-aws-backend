@@ -6,11 +6,11 @@ resource "aws_dynamodb_table" "primary" {
   stream_enabled   = true
   stream_view_type = "NEW_AND_OLD_IMAGES"
   
-  server_side_encryption = {
+  server_side_encryption {
     enabled = true
   }
 
-  point_in_time_recovery = {
+  point_in_time_recovery {
     enabled = true
   }
   
@@ -35,11 +35,11 @@ resource "aws_dynamodb_table" "secondary" {
   stream_enabled   = true
   stream_view_type = "NEW_AND_OLD_IMAGES"
 
-  server_side_encryption = {
+  server_side_encryption {
     enabled = true
   }
 
-  point_in_time_recovery = {
+  point_in_time_recovery {
     enabled = true
   }
 
