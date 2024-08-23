@@ -18,11 +18,23 @@ resource "aws_s3_bucket_public_access_block" "primary" {
   restrict_public_buckets = true
   ignore_public_acls = true
 }
+resource "aws_s3_bucket_ownership_controls" "primary" {
+  provider = aws.primary
+
+  bucket = aws_s3_bucket.primary.id
+
+  rule {
+    object_ownership = "ObjectWriter"
+  }
+}
 resource "aws_s3_bucket_acl" "primary" {
   provider = aws.primary
 
   bucket = aws_s3_bucket.primary.id
   acl    = "private"
+  depends_on = [
+    aws_s3_bucket_ownership_controls.primary
+  ]
 }
 resource "aws_s3_bucket_versioning" "primary" {
   provider = aws.primary
@@ -42,10 +54,6 @@ resource "aws_s3_bucket_replication_configuration" "primary" {
 
   rule {
     id = "all"
-    
-    delete_marker_replication {
-      status = "Enabled"
-    }
     
     status = "Enabled"
 
@@ -150,11 +158,24 @@ resource "aws_s3_bucket_public_access_block" "secondary" {
   restrict_public_buckets = true
   ignore_public_acls = true
 }
+resource "aws_s3_bucket_ownership_controls" "secondary" {
+  provider = aws.secondary
+
+  bucket = aws_s3_bucket.secondary.id
+
+  rule {
+    object_ownership = "ObjectWriter"
+  }
+}
 resource "aws_s3_bucket_acl" "secondary" {
   provider = aws.secondary
 
   bucket = aws_s3_bucket.secondary.id
   acl    = "private"
+  
+  depends_on = [
+    aws_s3_bucket_ownership_controls.secondary
+  ]
 }
 resource "aws_s3_bucket_versioning" "secondary" {
   provider = aws.secondary
@@ -174,10 +195,6 @@ resource "aws_s3_bucket_replication_configuration" "secondary" {
 
   rule {
     id = "all"
-
-    delete_marker_replication {
-      status = "Enabled"
-    }
 
     status = "Enabled"
 
