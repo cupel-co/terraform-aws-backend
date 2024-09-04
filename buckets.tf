@@ -63,6 +63,21 @@ resource "aws_s3_bucket_replication_configuration" "primary" {
     }
   }
 }
+resource "aws_s3_bucket_lifecycle_configuration" "primary" {
+  provider = aws.primary
+  
+  bucket = aws_s3_bucket.primary.id
+  rule {
+    id     = "Cleanup"
+    status = "Enabled"
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 1
+    }
+    noncurrent_version_expiration {
+      newer_noncurrent_versions = 20
+    }
+  }
+}
 data "aws_iam_policy_document" "primary_bucket_replication_role" {
   provider = aws.primary
 
@@ -201,6 +216,21 @@ resource "aws_s3_bucket_replication_configuration" "secondary" {
     destination {
       bucket        = aws_s3_bucket.primary.arn
       storage_class = "STANDARD"
+    }
+  }
+}
+resource "aws_s3_bucket_lifecycle_configuration" "secondary" {
+  provider = aws.secondary
+
+  bucket = aws_s3_bucket.secondary.id
+  rule {
+    id     = "Cleanup"
+    status = "Enabled"
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 1
+    }
+    noncurrent_version_expiration {
+      newer_noncurrent_versions = 20
     }
   }
 }
