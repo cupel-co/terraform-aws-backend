@@ -79,6 +79,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "primary" {
     status = "Enabled"
     noncurrent_version_expiration {
       newer_noncurrent_versions = 20
+      noncurrent_days = 365
     }
   }
   rule {
@@ -247,6 +248,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "secondary" {
     status = "Enabled"
     noncurrent_version_expiration {
       newer_noncurrent_versions = 20
+      noncurrent_days = 365
     }
   }
   rule {
