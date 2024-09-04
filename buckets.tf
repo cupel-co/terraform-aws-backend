@@ -68,13 +68,25 @@ resource "aws_s3_bucket_lifecycle_configuration" "primary" {
   
   bucket = aws_s3_bucket.primary.id
   rule {
-    id     = "Cleanup"
+    id     = "AbortIncompleteMultipartUpload"
     status = "Enabled"
     abort_incomplete_multipart_upload {
       days_after_initiation = 1
     }
+  }
+  rule {
+    id     = "RemoveOldVersions"
+    status = "Enabled"
     noncurrent_version_expiration {
       newer_noncurrent_versions = 20
+    }
+  }
+  rule {
+    id     = "MoveOldVersions"
+    status = "Enabled"
+    transition {
+      storage_class = "STANDARD_IA"
+      days = 1095
     }
   }
 }
@@ -224,13 +236,25 @@ resource "aws_s3_bucket_lifecycle_configuration" "secondary" {
 
   bucket = aws_s3_bucket.secondary.id
   rule {
-    id     = "Cleanup"
+    id     = "AbortIncompleteMultipartUpload"
     status = "Enabled"
     abort_incomplete_multipart_upload {
       days_after_initiation = 1
     }
+  }
+  rule {
+    id     = "RemoveOldVersions"
+    status = "Enabled"
     noncurrent_version_expiration {
       newer_noncurrent_versions = 20
+    }
+  }
+  rule {
+    id     = "MoveOldVersions"
+    status = "Enabled"
+    transition {
+      storage_class = "STANDARD_IA"
+      days = 1095
     }
   }
 }
