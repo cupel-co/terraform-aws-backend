@@ -1,6 +1,6 @@
 # OpenTofu Module AWS Backend
 
-![Pipeline](https://github.com/cupel-co/opentofu-module-aws-backend/actions/workflows/release.yml/badge.svg?branch=main)
+![Pipeline](https://github.com/cupel-co/terraform-aws-backend/actions/workflows/release.yml/badge.svg?branch=main)
 
 Provision AWS resources for OpenTofu backend. Resources provisioned: 
 * DynamoDB global table
@@ -50,7 +50,7 @@ provider "aws" {
 }
 
 module "backend" {
-    source = "github.com/cupel-co/OpenTofu-module-aws-backend?ref=v0.0.1"
+    source = "github.com/cupel-co/terraform-aws-backend?ref=v0.0.1"
     
     dynamodb_name = "OpenTofuLock"
     encryption_key_access_allowed_arns = [
