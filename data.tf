@@ -1,6 +1,3 @@
-data "aws_region" "primary" {
-  provider = aws.primary
-}
 data "aws_region" "secondary" {
   provider = aws.secondary
 }
