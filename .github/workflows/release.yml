@@ -1,4 +1,4 @@
-name: 'Release'
+name: Release
 
 on:
   push:
@@ -7,73 +7,23 @@ on:
 
 concurrency:
   cancel-in-progress: false
-  group: release-${{ github.ref_name }}
+  group: ${{ github.workflow }}-${{ github.ref_name }}
 
 jobs:
-  generate-version:
-    name: Generate Version
-    runs-on: ubuntu-latest
-    outputs:
-      sem-ver: ${{ steps.get-version.outputs.semVer }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v1.1.1
-        with:
-          versionSpec: '5.x'
-      - name: Get version
-        id: get-version
-        uses: gittools/actions/gitversion/execute@v1.1.1
-        with:
-          targetPath: ./
-          disableCache: true
-          useConfigFile: true
-          configFilePath: GitVersion.yml
-        env:
-          BUILD_NUMBER: ${{ github.run_number }}
-
+  generate:
+    name: Generate
+    uses: cupel-co/workflows/.github/workflows/generate-version.yml@v0.2.0
+  
   release:
     name: Release
-    runs-on: ubuntu-latest
+    uses: cupel-co/workflows/.github/workflows/github-release.yml@v0.2.0
     needs:
-      - generate-version
-    env:
-      tag: v${{ needs.generate-version.outputs.sem-ver }}
-    environment: Production
+      - generate
     permissions:
       contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-      - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.GH_GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GH_GPG_PRIVATE_KEY_PASSWORD }}
-          git_user_signingkey: true
-          git_tag_gpgsign: true
-      - name: Create and push tag
-        run: |
-          git tag -s ${{ env.tag }} -m "${{ env.tag }}"
-          git push origin tag ${{ env.tag }}
-      - name: Generate changelog
-        id: changelog
-        uses: requarks/changelog-action@v1
-        with:
-          token: ${{ github.token }}
-          tag: ${{ env.tag }}
-          writeToFile: false
-          includeInvalidCommits: true
-      - name: Create release
-        uses: softprops/action-gh-release@v2
-        with:
-          body: "${{ steps.changelog.outputs.changes }}"
-          tag_name: ${{ env.tag }}
-          make_latest: true
+    with:
+      tag: "v${{ needs.generate.outputs.sem-ver }}"
+    secrets:
+      gpg-key: "${{ secrets.GH_GPG_PRIVATE_KEY }}"
+      gpg-password: "${{ secrets.GH_GPG_PRIVATE_KEY_PASSWORD }}"
+      google-chat-webhook-url: "${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}"
