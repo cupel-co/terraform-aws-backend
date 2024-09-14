@@ -12,11 +12,11 @@ concurrency:
 jobs:
   generate:
     name: Generate
-    uses: cupel-co/workflows/.github/workflows/generate-version.yml
+    uses: cupel-co/workflows/.github/workflows/generate-version.yml@v0.2.0
   
   release:
     name: Release
-    uses: cupel-co/workflows/.github/workflows/github-release.yml
+    uses: cupel-co/workflows/.github/workflows/github-release.yml@v0.2.0
     needs:
       - generate
     permissions:
