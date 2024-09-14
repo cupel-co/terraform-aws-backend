@@ -14,4 +14,4 @@ concurrency:
 jobs:
   scan:
     name: Scan
-    uses: cupel-co/workflows/.github/workflows/tfsec@v0.2.0
+    uses: cupel-co/workflows/.github/workflows/tfsec.yml@v0.2.0
