@@ -1,0 +1,17 @@
+name: TFSec
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+concurrency:
+  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+
+jobs:
+  scan:
+    name: Scan
+    uses: cupel-co/workflows/.github/workflows/tfsec@v0.2.0
