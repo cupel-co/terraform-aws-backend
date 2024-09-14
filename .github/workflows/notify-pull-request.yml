@@ -5,21 +5,14 @@ on:
     types:
       - opened
       - reopened
-      - closed
 
 concurrency:
   cancel-in-progress: false
-  group: pull-request-opened-${{ github.ref_name }}
+  group: ${{ github.workflow }}-${{ github.ref_name }}
 
 jobs:
-  update:
-    name: Send notification
-    runs-on: ubuntu-latest
-    steps:
-      - name: Notify Google Chat
-        if: ${{ always() }}
-        uses: SimonScholz/google-chat-action@main
-        with:
-          webhookUrl: '${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}'
-          title: 'Pull request ${{ github.event.action }}'
-          subtitle: ${{ github.event.pull_request.title }}
+  pull-request:
+    name: Pull Request
+    uses: cupel-co/workflows/.github/workflows/notify-pull-request.yml@v0.2.0
+    secrets:
+      google-chat-webhook-url: '${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}'
