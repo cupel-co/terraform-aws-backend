@@ -15,3 +15,5 @@ jobs:
   scan:
     name: Scan
     uses: cupel-co/workflows/.github/workflows/tflint.yml@v0.2.0
+    with:
+      working-directory: ./
