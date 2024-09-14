@@ -57,7 +57,7 @@ data "aws_iam_policy_document" "lock_table" {
     ]
     resources = [
       aws_dynamodb_table.lock_table.arn,
-      one(aws_dynamodb_table.lock_table.replica.*.arn)
+      one(aws_dynamodb_table.lock_table.replica[*].arn)
     ]
   }
 }
