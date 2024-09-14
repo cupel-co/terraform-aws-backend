@@ -1,6 +1,6 @@
 # OpenTofu Module AWS Backend
 
-![Pipeline](https://github.com/cupel-co/terraform-aws-backend/actions/workflows/release.yml/badge.svg?branch=main)
+![Integrate](https://github.com/cupel-co/terraform-aws-backend/actions/workflows/integrate.yml/badge.svg?branch=main)
 ![TF Lint](https://github.com/cupel-co/terraform-aws-backend/actions/workflows/tflint.yml/badge.svg?branch=main)
 ![TF Sec](https://github.com/cupel-co/terraform-aws-backend/actions/workflows/tfsec.yml/badge.svg?branch=main)
 

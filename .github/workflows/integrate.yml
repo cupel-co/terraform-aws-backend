@@ -1,4 +1,4 @@
-name: Release
+name: Integrate
 
 on:
   push:
@@ -12,11 +12,11 @@ concurrency:
 jobs:
   generate:
     name: Generate
-    uses: cupel-co/workflows/.github/workflows/generate-version.yml@v0.2.0
-  
+    uses: cupel-co/workflows/.github/workflows/generate-version.yml@v0.7.0
+
   release:
     name: Release
-    uses: cupel-co/workflows/.github/workflows/github-release.yml@v0.2.0
+    uses: cupel-co/workflows/.github/workflows/github-release.yml@v0.7.0
     needs:
       - generate
     permissions:
@@ -24,6 +24,7 @@ jobs:
     with:
       tag: "v${{ needs.generate.outputs.sem-ver }}"
     secrets:
+      google-chat-webhook-url: '${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}'
       gpg-key: "${{ secrets.GH_GPG_PRIVATE_KEY }}"
       gpg-password: "${{ secrets.GH_GPG_PRIVATE_KEY_PASSWORD }}"
-      google-chat-webhook-url: "${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}"
+      token: "${{ secrets.GH_RELEASE_PAT }}"

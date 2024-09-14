@@ -2,7 +2,7 @@ name: Preview
 
 on:
   pull_request:
-    types: 
+    types:
       - opened
       - reopened
       - synchronize
@@ -14,4 +14,4 @@ concurrency:
 jobs:
   generate:
     name: Generate
-    uses: cupel-co/workflows/.github/workflows/generate-version.yml@v0.2.0
+    uses: cupel-co/workflows/.github/workflows/generate-version.yml@v0.7.0

@@ -1,4 +1,4 @@
-name: TFSec
+name: TF Sec
 
 on:
   pull_request:
@@ -16,6 +16,8 @@ concurrency:
 jobs:
   scan:
     name: Scan
-    uses: cupel-co/workflows/.github/workflows/tfsec.yml@v0.2.0
-    with:
-      working-directory: ./
+    uses: cupel-co/workflows/.github/workflows/tfsec.yml@v0.7.0
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write

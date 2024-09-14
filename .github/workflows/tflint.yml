@@ -1,4 +1,4 @@
-name: TFLint
+name: TF Lint
 
 on:
   pull_request:
@@ -16,6 +16,4 @@ concurrency:
 jobs:
   scan:
     name: Scan
-    uses: cupel-co/workflows/.github/workflows/tflint.yml@v0.2.0
-    with:
-      working-directory: ./
+    uses: cupel-co/workflows/.github/workflows/tflint.yml@v0.7.0
