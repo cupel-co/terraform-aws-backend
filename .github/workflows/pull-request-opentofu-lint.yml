@@ -1,0 +1,17 @@
+name: OpenTofu Lint
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+concurrency:
+  cancel-in-progress: false
+  group: '${{ github.workflow }}-${{ github.ref_name }}'
+
+jobs:
+  scan:
+    name: Scan
+    uses: cupel-co/workflows/.github/workflows/opentofu.lint.yml@v0.21.0
