@@ -15,3 +15,5 @@ jobs:
   scan:
     name: Scan
     uses: cupel-co/workflows/.github/workflows/opentofu.lint.yml@v0.21.0
+    with:
+      working-directory: ./
