@@ -51,8 +51,9 @@ provider "aws" {
 }
 
 module "backend" {
-    source = "github.com/cupel-co/terraform-aws-backend?ref=v0.0.1"
-    
+    source = "cupel-co/backend/aws"
+    version = "v0.36.0"
+
     dynamodb_name = "OpenTofuLock"
     encryption_key_access_allowed_arns = [
         ""
