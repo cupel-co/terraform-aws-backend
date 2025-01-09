@@ -13,6 +13,8 @@ resource "aws_kms_key" "primary" {
   tags = var.tags
 }
 resource "aws_kms_alias" "primary" {
+  provider = aws.primary
+
   target_key_id = aws_kms_key.primary.id
   name = "alias/${var.kms_alias}"
 }
@@ -61,6 +63,13 @@ resource "aws_kms_replica_key" "secondary" {
   deletion_window_in_days = 7
   primary_key_arn = aws_kms_key.primary.arn
 }
+resource "aws_kms_alias" "secondary" {
+  provider = aws.secondary
+
+  target_key_id = aws_kms_replica_key.secondary.id
+  name = "alias/${var.kms_alias}"
+}
+
 resource "aws_kms_key_policy" "secondary" {
   provider = aws.secondary
 
