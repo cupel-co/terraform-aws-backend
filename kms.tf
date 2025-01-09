@@ -1,6 +1,6 @@
 resource "aws_kms_key" "primary" {
   provider = aws.primary
-  
+
   description = "This key is used to encrypt state files"
   deletion_window_in_days = 14
   enable_key_rotation = true
@@ -12,6 +12,11 @@ resource "aws_kms_key" "primary" {
 
   tags = var.tags
 }
+resource "aws_kms_alias" "primary" {
+  target_key_id = aws_kms_key.primary.id
+  name = "alias/${var.kms_alias}"
+}
+
 resource "aws_kms_key_policy" "primary" {
   provider = aws.primary
 
