@@ -2,7 +2,7 @@ variable "dynamodb_name" {
   description = "The name of the table, this needs to be unique within a region."
   type        = string
   validation {
-    condition = length(var.dynamodb_name) >= 3 && length(var.dynamodb_name) <= 255
+    condition     = length(var.dynamodb_name) >= 3 && length(var.dynamodb_name) <= 255
     error_message = "The name should be between 3 and 255 characters long(inclusive)."
   }
 }
@@ -18,20 +18,26 @@ variable "iam_prefix" {
   default     = "Terraform"
 }
 
+variable "kms_alias" {
+  description = "The alias for the encryption key"
+  type        = string
+  default     = "terraform"
+}
+
 variable "primary_bucket_name" {
   description = "The name of the primary bucket. If omitted, Terraform will assign a random, unique name. Must be greater tha 9 and less than 64 characters in length."
-  type = string
+  type        = string
   validation {
-    condition = length(var.primary_bucket_name) >= 10 && length(var.primary_bucket_name) <= 63
+    condition     = length(var.primary_bucket_name) >= 10 && length(var.primary_bucket_name) <= 63
     error_message = "The name should be between 10 and 63 characters long(inclusive)."
   }
 }
 
 variable "secondary_bucket_name" {
   description = "The name of the secondary bucket. If omitted, Terraform will assign a random, unique name. Must be greater tha 9 and less than 64 characters in length."
-  type = string
+  type        = string
   validation {
-    condition = length(var.secondary_bucket_name) >= 10 && length(var.secondary_bucket_name) <= 63
+    condition     = length(var.secondary_bucket_name) >= 10 && length(var.secondary_bucket_name) <= 63
     error_message = "The name should be between 10 and 63 characters long(inclusive)."
   }
 }
