@@ -7,12 +7,14 @@ on:
 
 concurrency:
   cancel-in-progress: false
-  group: ${{ github.workflow }}-${{ github.ref_name }}
+  group: '${{ github.workflow }}-${{ github.ref_name }}'
 
 jobs:
   version:
     name: Version
     uses: cupel-co/workflows/.github/workflows/version.generate.yml@ec59454b906ec3d2abdce35b1d83a1891ca618bf
+    permissions:
+      contents: read
 
   release:
     name: Release
